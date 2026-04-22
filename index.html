@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Event Price Calculator</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Fraunces:wght@600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main class="app-shell">
+    <section class="hero">
+      <p class="eyebrow">Pricing calculator</p>
+      <h1>Know exactly what to charge for every event.</h1>
+      <p class="hero-copy">
+        Enter the event cost and the calculator works backward from the processing fee of
+        <strong>2.99% + $0.30</strong> to show the final customer price, the fee amount, and what you keep.
+      </p>
+    </section>
+
+    <section class="calculator-card" aria-labelledby="calculator-title">
+      <div class="card-header">
+        <h2 id="calculator-title">Event payout calculator</h2>
+        <p>Built from your formula, then rounded up to the next $0.10.</p>
+      </div>
+
+      <label class="input-group" for="event-cost">
+        <span>Event cost</span>
+        <div class="currency-input">
+          <span class="currency-symbol">$</span>
+          <input
+            id="event-cost"
+            name="event-cost"
+            type="number"
+            min="0"
+            step="0.01"
+            inputmode="decimal"
+            placeholder="125.00"
+            value="125.00"
+          >
+        </div>
+      </label>
+
+      <div class="results-grid" aria-live="polite">
+        <article class="result-card accent">
+          <span class="result-label">What to charge</span>
+          <strong class="result-value" id="charge-amount">$0.00</strong>
+          <p class="result-note">This is the customer-facing price.</p>
+        </article>
+
+        <article class="result-card">
+          <span class="result-label">Processing fees</span>
+          <strong class="result-value" id="fee-amount">$0.00</strong>
+          <p class="result-note">2.99% of the charge plus $0.30.</p>
+        </article>
+
+        <article class="result-card">
+          <span class="result-label">What we keep</span>
+          <strong class="result-value" id="keep-amount">$0.00</strong>
+          <p class="result-note">This is the amount left after fees on the rounded charge.</p>
+        </article>
+      </div>
+
+      <div class="formula-panel">
+        <h3>How it works</h3>
+        <p id="formula-breakdown">
+          For an event cost of $0.00, the calculator solves the formula and then subtracts the fees from the final charge.
+        </p>
+      </div>
+    </section>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
