@@ -3,27 +3,268 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Event Price Calculator</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Fraunces:wght@600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css">
+  <title>Event Payout Calculator</title>
+  <style>
+    :root {
+      --bg-top: #ffffe5;
+      --bg-bottom: #ffffe5;
+      --panel: rgba(255, 252, 246, 0.92);
+      --panel-strong: rgba(255, 255, 255, 0.96);
+      --border: rgba(54, 72, 94, 0.14);
+      --text: #162033;
+      --muted: #5f6c80;
+      --accent: #bf4b31;
+      --shadow: 0 24px 60px rgba(36, 47, 64, 0.16);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Arial, Helvetica, sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(255, 255, 255, 0.65), transparent 28%),
+        linear-gradient(160deg, var(--bg-top), var(--bg-bottom));
+    }
+
+    .app-shell {
+      width: min(980px, calc(100% - 2rem));
+      margin: 0 auto;
+      padding: 3rem 0 4rem;
+    }
+
+    .hero {
+      max-width: 720px;
+      margin-bottom: 2rem;
+    }
+
+    .eyebrow {
+      margin: 0 0 0.75rem;
+      color: var(--accent);
+      font-size: 0.85rem;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+    }
+
+    h1, h2, h3 {
+      margin: 0;
+      line-height: 1.05;
+    }
+
+    h1 {
+      font-size: clamp(2.4rem, 5vw, 4rem);
+      max-width: 45ch;
+      color: var(--accent);
+    }
+
+    .hero-copy {
+      margin: 1rem 0 0;
+      max-width: 58ch;
+      font-size: 1.06rem;
+      line-height: 1.7;
+      color: var(--muted);
+    }
+
+    .calculator-card {
+      padding: 1.5rem;
+      border: 1px solid var(--border);
+      border-radius: 28px;
+      background: var(--panel);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(18px);
+    }
+
+    .card-header p,
+    .result-note,
+    .formula-panel p {
+      color: var(--muted);
+    }
+
+    .card-header p {
+      margin: 0.45rem 0 0;
+    }
+
+    .input-group {
+      display: block;
+      margin-top: 1.5rem;
+    }
+
+    .input-group span {
+      display: inline-block;
+      margin-bottom: 0.65rem;
+      font-size: 0.95rem;
+      font-weight: 700;
+    }
+
+    .currency-input {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      padding: 0 1rem;
+      border: 1px solid rgba(22, 32, 51, 0.12);
+      border-radius: 18px;
+      background: var(--panel-strong);
+    }
+
+    .currency-symbol {
+      font-size: 1.35rem;
+      font-weight: 700;
+      color: var(--accent);
+    }
+
+    input {
+      width: 100%;
+      padding: 1rem 0;
+      border: 0;
+      outline: 0;
+      background: transparent;
+      color: var(--text);
+      font-size: 1.4rem;
+      font-weight: 700;
+      font-family: inherit;
+    }
+
+    .results-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 1rem;
+      margin-top: 1.5rem;
+    }
+
+    .result-card {
+      padding: 1.25rem;
+      border-radius: 22px;
+      background: rgba(255, 255, 255, 0.82);
+      border: 1px solid rgba(22, 32, 51, 0.08);
+    }
+
+    .result-card.accent {
+      background: linear-gradient(160deg, rgba(191, 75, 49, 0.12), rgba(255, 255, 255, 0.92));
+      border-color: rgba(191, 75, 49, 0.22);
+    }
+
+    .result-label {
+      display: block;
+      font-size: 0.92rem;
+      font-weight: 700;
+      color: var(--muted);
+    }
+
+    .result-value {
+      display: block;
+      margin-top: 0.65rem;
+      font-size: clamp(1.9rem, 4vw, 2.8rem);
+      line-height: 1;
+      font-weight: 700;
+    }
+
+    .result-note {
+      margin: 0.75rem 0 0;
+      line-height: 1.5;
+    }
+
+    .formula-panel {
+      margin-top: 1.5rem;
+      padding: 1.25rem;
+      border-radius: 22px;
+      background: rgba(18, 28, 44, 0.92);
+    }
+
+    .formula-panel h3 {
+      color: #fef7f0;
+    }
+
+    .formula-panel p {
+      margin: 0.65rem 0 0;
+      color: rgba(240, 244, 251, 0.82);
+      line-height: 1.65;
+    }
+
+    .adventure-strip {
+      margin-top: 2rem;
+    }
+
+    .adventure-message {
+      margin: 0 0 1rem;
+      font-size: clamp(1.3rem, 3vw, 2rem);
+      font-weight: 700;
+      text-align: center;
+      color: var(--accent);
+    }
+
+    .adventure-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 0.8rem;
+      align-items: stretch;
+    }
+
+    .adventure-card {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.5rem;
+      border-radius: 22px;
+      background: rgba(255, 255, 255, 0.72);
+      box-shadow: var(--shadow);
+    }
+
+    .adventure-card img {
+      display: block;
+      width: 100%;
+      height: 150px;
+      object-fit: contain;
+      border-radius: 18px;
+      background: #ffffff;
+    }
+
+    @media (max-width: 760px) {
+      .app-shell {
+        width: min(100% - 1rem, 980px);
+        padding: 1.25rem 0 2rem;
+      }
+
+      .calculator-card {
+        padding: 1.1rem;
+        border-radius: 24px;
+      }
+
+      .results-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .adventure-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 520px) {
+      .adventure-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
 </head>
 <body>
   <main class="app-shell">
     <section class="hero">
-      <p class="eyebrow">Pricing calculator</p>
-      <h1>Know exactly what to charge for every event.</h1>
+      <p class="eyebrow">Event Pricing calculator</p>
+      <h1>Let Me Do The Math!</h1>
       <p class="hero-copy">
         Enter the event cost and the calculator works backward from the processing fee of
-        <strong>2.99% + $0.30</strong> to show the final customer price, the fee amount, and what you keep.
+        <strong>2.99% + $0.30</strong> to show the final member price, the fee amount, and the amount the club will get back from Stripe.
       </p>
     </section>
 
     <section class="calculator-card" aria-labelledby="calculator-title">
       <div class="card-header">
-        <h2 id="calculator-title">Event payout calculator</h2>
-        <p>Built from your formula, then rounded up to the next $0.10.</p>
+        <h2 id="calculator-title">Event Calculator</h2>
+        <p>Rounded up to the next $0.10.</p>
       </div>
 
       <label class="input-group" for="event-cost">
@@ -45,9 +286,9 @@
 
       <div class="results-grid" aria-live="polite">
         <article class="result-card accent">
-          <span class="result-label">What to charge</span>
+          <span class="result-label">Amount to charge</span>
           <strong class="result-value" id="charge-amount">$0.00</strong>
-          <p class="result-note">This is the customer-facing price.</p>
+          <p class="result-note">This is what the member pays.</p>
         </article>
 
         <article class="result-card">
@@ -57,21 +298,85 @@
         </article>
 
         <article class="result-card">
-          <span class="result-label">What we keep</span>
+          <span class="result-label">Amount club gets from Stripe.</span>
           <strong class="result-value" id="keep-amount">$0.00</strong>
-          <p class="result-note">This is the amount left after fees on the rounded charge.</p>
+          <p class="result-note">This will always be at least the event cost.</p>
         </article>
       </div>
 
       <div class="formula-panel">
         <h3>How it works</h3>
         <p id="formula-breakdown">
-          For an event cost of $0.00, the calculator solves the formula and then subtracts the fees from the final charge.
+          For an event cost of $0.00, the calculator solves the formula, rounds up to the next $0.10, and subtracts the fees from the final charge.
         </p>
+      </div>
+    </section>
+
+    <section class="adventure-strip" aria-label="Adventure activities">
+      <p class="adventure-message">Have A Fun Event! Life's Out There! Live It!</p>
+      <div class="adventure-grid">
+        <div class="adventure-card">
+          <img src="BikingLarge.png" alt="Cyclist riding through a forest">
+        </div>
+        <div class="adventure-card">
+          <img src="KayakingLarge.png" alt="Kayaker on a lake">
+        </div>
+        <div class="adventure-card">
+          <img src="HikingLarge.png" alt="Hiker standing on a cliff at sunset">
+        </div>
+        <div class="adventure-card">
+          <img src="CampingLarge.png" alt="Tent and campfire under the night sky">
+        </div>
       </div>
     </section>
   </main>
 
-  <script src="script.js"></script>
+  <script>
+    const eventCostInput = document.getElementById("event-cost");
+    const chargeAmount = document.getElementById("charge-amount");
+    const feeAmount = document.getElementById("fee-amount");
+    const keepAmount = document.getElementById("keep-amount");
+    const formulaBreakdown = document.getElementById("formula-breakdown");
+
+    const PERCENT_FEE = 0.0299;
+    const FIXED_FEE = 0.3;
+
+    function formatCurrency(value) {
+      return new Intl.NumberFormat("en-US", {
+        style: "currency",
+        currency: "USD",
+      }).format(value);
+    }
+
+    function roundToCents(value) {
+      return Math.round((value + Number.EPSILON) * 100) / 100;
+    }
+
+    function roundUpToNearestDime(value) {
+      return Math.ceil((value - Number.EPSILON) * 10) / 10;
+    }
+
+    function calculate() {
+      const eventCost = Number.parseFloat(eventCostInput.value);
+      const safeCost = Number.isFinite(eventCost) && eventCost >= 0 ? eventCost : 0;
+
+      const exactCharge = (safeCost + FIXED_FEE) / (1 - PERCENT_FEE);
+      const charge = roundUpToNearestDime(exactCharge);
+      const fees = roundToCents(charge * PERCENT_FEE + FIXED_FEE);
+      const keep = roundToCents(charge - fees);
+
+      chargeAmount.textContent = formatCurrency(charge);
+      feeAmount.textContent = formatCurrency(fees);
+      keepAmount.textContent = formatCurrency(keep);
+
+      formulaBreakdown.textContent =
+        `${formatCurrency(safeCost)} + ${formatCurrency(FIXED_FEE)} divided by 0.9701 gives an exact charge before rounding. ` +
+        `That amount is always rounded up to the next $0.10 for a final charge of ${formatCurrency(charge)}. ` +
+        `The fee on that charge is ${formatCurrency(fees)}, leaving ${formatCurrency(keep)}.`;
+    }
+
+    eventCostInput.addEventListener("input", calculate);
+    calculate();
+  </script>
 </body>
 </html>
